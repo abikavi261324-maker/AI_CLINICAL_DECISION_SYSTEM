@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Clinical Decision System</title>
+</head>
+
+<body style="text-align:center; font-family:Arial; background:#0f172a; color:white;">
+
+<h1>🧠 AI Clinical Decision System</h1>
+
+<p>Select Disease Category</p>
+
+<select id="category">
+    <option value="eye">Eye Disease</option>
+    <option value="skin">Skin Disease</option>
+    <option value="general">General Disease</option>
+</select>
+
+<br><br>
+
+<input type="file" id="image">
+
+<br><br>
+
+<button onclick="predict()">Analyze Image</button>
+
+<br><br>
+
+<p id="loading" style="display:none;">🔄 AI is analyzing image...</p>
+
+<h2 id="result"></h2>
+
+<script>
+
+function predict() {
+
+    let file = document.getElementById("image").files[0];
+
+    if (!file) {
+        alert("Please upload an image!");
+        return;
+    }
+
+    let formData = new FormData();
+    formData.append("image", file);
+    formData.append("category", document.getElementById("category").value);
+
+    document.getElementById("loading").style.display = "block";
+
+    fetch('/predict', {
+        method: 'POST',
+        body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+
+        document.getElementById("loading").style.display = "none";
+
+        document.getElementById("result").innerHTML =
+            "🧾 Prediction: " + data.prediction +
+            "<br>📊 Confidence: " + data.confidence + "%" +
+            "<br>📖 Description: " + data.description +
+            "<br>🤖 Model: " + data.model;
+    });
+}
+
+</script>
+
+</body>
+</html>
